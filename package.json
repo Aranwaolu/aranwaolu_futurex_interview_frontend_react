@@ -38,5 +38,9 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://127.0.0.1:4242"
+  "proxy": "http://127.0.0.1:4242",
+  "engines": {
+    "npm": "6.14.6",
+    "node": "12.9.1"
+  }
 }
