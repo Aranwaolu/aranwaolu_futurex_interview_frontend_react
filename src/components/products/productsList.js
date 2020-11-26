@@ -14,7 +14,6 @@ const ProductDisplay = styled.div`
 	margin: 20px;
 `
 
-// const Products = ({ products, toggle }) => {
 const Products = ({ toggle }) => {
 	const [appState, setAppState] = useContext(ProductsContext)
 

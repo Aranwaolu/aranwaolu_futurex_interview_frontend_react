@@ -3,14 +3,25 @@ import { loadStripe } from '@stripe/stripe-js'
 import axios from 'axios'
 
 import { getCart, removeFromCart, clearCart } from '../../utils/cart'
+import ReactPayPal from '../PayPal'
 
-import Cart, { EmptyCart } from './index'
-import { Wrapper, Modal, CloseButton, ClearCartBtn, TopRow, PriceTag, CheckoutBtn } from './cartStyles'
+import Cart from './index'
+import {
+	Wrapper,
+	Modal,
+	CloseButton,
+	ClearCartBtn,
+	TopRow,
+	PriceTag,
+	CheckoutBtn,
+	EmptyCart,
+} from './cartStyles'
 
 const stripePromise = loadStripe(process.env.REACT_APP_PUBLISHABLE_KEY)
 
 const CartList = ({ isShown, hide }) => {
 	const [cart, setcart] = useState([])
+	const [checkout, setCheckout] = useState(false)
 
 	const dynamicModalClass = () => (isShown ? { display: 'block' } : '')
 
@@ -22,7 +33,7 @@ const CartList = ({ isShown, hide }) => {
 		setcart(getCart())
 	}
 
-	const handleClick = async (cart) => {
+	const handleStripeBtnClick = async (cart) => {
 		// Get Stripe.js instance
 		const stripe = await stripePromise
 
@@ -31,6 +42,9 @@ const CartList = ({ isShown, hide }) => {
 		const response = await axios.post(api, cart)
 
 		const session = await response.data
+
+		clearCart()
+		alert('Wait! This takes a few seconds...')
 
 		// When the customer clicks on the button, redirect them to Checkout.
 		const result = await stripe.redirectToCheckout({
@@ -44,64 +58,93 @@ const CartList = ({ isShown, hide }) => {
 		}
 	}
 
+	const handlePaypalBtnClick = async (cart) => {}
+
 	return isShown ? (
 		<Wrapper>
 			<Modal style={dynamicModalClass()}>
-				<div>
-					<TopRow>
-						<CloseButton onClick={hide}> &times;</CloseButton>
-						<p>Your Cart</p>
-					</TopRow>
-
-					{cart && cart.cartItems.length !== 0 && (
-						<ClearCartBtn
-							onClick={() => {
-								clearCart()
-								handleCartChange()
-							}}
-						>
-							Clear cart
-						</ClearCartBtn>
-					)}
-				</div>
-
-				<div>
-					{cart &&
-						cart.cartItems.length !== 0 &&
-						cart.cartItems.map((product) => (
-							<Cart
-								key={product.id}
-								cartItem={product}
-								handleRemove={() => {
-									removeFromCart(product)
-									handleCartChange()
-								}}
-								handleCartChange={handleCartChange}
-							/>
-						))}
-					{cart && cart.cartItems.length === 0 && <EmptyCart>Your cart is empty</EmptyCart>}
-				</div>
-
-				<div>
-					{cart && cart.cartItems.length !== 0 && (
-						<div>
-							<PriceTag>
-								<p>Total: </p>
-								<p>${cart.cartTotal}</p>
-							</PriceTag>
-							<CheckoutBtn
+				{checkout === true ? (
+					<div>
+						<TopRow>
+							<CloseButton
 								onClick={() => {
-									handleClick(cart)
+									setCheckout(false)
+									hide()
 								}}
 							>
-								Checkout with Stripe
-							</CheckoutBtn>
-							<div>OR</div>
-							<CheckoutBtn color='#0070ba'>Checkout with Paypal</CheckoutBtn>
+								{' '}
+								&times;
+							</CloseButton>
+							<p>Your Cart</p>
+						</TopRow>
+						<ReactPayPal cart={cart} />
+					</div>
+				) : (
+					<div>
+						<div>
+							<TopRow>
+								<CloseButton onClick={hide}>&times;</CloseButton>
+								<p>Your Cart</p>
+							</TopRow>
+
+							{cart && cart.cartItems.length !== 0 && (
+								<ClearCartBtn
+									onClick={() => {
+										clearCart()
+										handleCartChange()
+									}}
+								>
+									Clear cart
+								</ClearCartBtn>
+							)}
 						</div>
-					)}
-					{cart.cartItems.length === 0 && <div></div>}
-				</div>
+
+						<div>
+							{cart &&
+								cart.cartItems.length !== 0 &&
+								cart.cartItems.map((product) => (
+									<Cart
+										key={product.id}
+										cartItem={product}
+										handleRemove={() => {
+											removeFromCart(product)
+											handleCartChange()
+										}}
+										handleCartChange={handleCartChange}
+									/>
+								))}
+							{cart && cart.cartItems.length === 0 && <EmptyCart>Your cart is empty</EmptyCart>}
+						</div>
+
+						<div>
+							{cart && cart.cartItems.length !== 0 && (
+								<div>
+									<PriceTag>
+										<p>Total: </p>
+										<p>${cart.cartTotal}</p>
+									</PriceTag>
+									<CheckoutBtn
+										onClick={() => {
+											handleStripeBtnClick(cart)
+										}}
+									>
+										Checkout with Stripe
+									</CheckoutBtn>
+									<CheckoutBtn
+										color='#0070ba'
+										style={{ marginBottom: '40px' }}
+										onClick={() => {
+											setCheckout(true)
+										}}
+									>
+										Checkout with Paypal
+									</CheckoutBtn>
+								</div>
+							)}
+							{cart.cartItems.length === 0 && <div></div>}
+						</div>
+					</div>
+				)}
 			</Modal>
 		</Wrapper>
 	) : null

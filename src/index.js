@@ -6,7 +6,7 @@ import App from './app.js'
 ReactDOM.render(
 	<React.StrictMode>
 		<div>
-			<p>Nav and heading go here...</p>
+			<h2>Products Page (Nav would go here...)</h2>
 		</div>
 		<App />
 	</React.StrictMode>,

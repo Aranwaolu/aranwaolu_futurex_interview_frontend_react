@@ -86,6 +86,7 @@ export const PriceTag = styled.div`
 	font-weight: 500;
 	// margin: 30px 0px;
 	border-top: 2px solid grey;
+	// border-bottom: 2px solid grey;
 `
 
 export const CheckoutBtn = styled.div`
@@ -101,10 +102,97 @@ export const CheckoutBtn = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin: 40px 0px;
+	margin: 10px 0px;
 
 	&:focus,
 	&:hover {
 		cursor: pointer;
+	}
+`
+
+export const EmptyCart = styled.div`
+	padding: 30px;
+	font-size: 20px;
+	color: grey;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 80px 0px;
+`
+
+export const CartCard = styled.div`
+	display: flex;
+	flex-direction: row;
+	// flex-wrap: wrap;
+	width: 450px;
+	justify-content: space-between;
+	align-items: center;
+	margin: 20px;
+	padding: 10px 20px;
+	background-color: white;
+`
+
+export const CartImg = styled.img.attrs((props) => ({
+	src: props.src,
+}))`
+	display: flex;
+	width: ${(props) => (props.width ? props.width : '40px')};
+	height: 40px;
+`
+
+export const LeftSideCartBox = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: left;
+	font-size: 12px;
+	color: #747d7a;
+	margin: 20px 0;
+	width: 180px;
+	// height: auto;
+	// background-color: red;
+`
+
+export const Title = styled.p`
+	font-size: 16px;
+`
+
+export const QuantityChanger = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	border: 1px solid grey;
+	border-radius: 3px;
+	width: 60px;
+	height: 22px;
+	padding: 7px;
+`
+export const QuantityOperator = styled.a`
+	font-weight: bold;
+
+	&:focus,
+	&:hover {
+		cursor: pointer;
+		color: red;
+	}
+`
+
+export const Price = styled.div`
+	color: grey;
+	font-size: 18px;
+	padding: 5px;
+`
+
+export const RemoveItemIcon = styled.a`
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	color: grey;
+
+	&:focus,
+	&:hover {
+		cursor: pointer;
+		color: black;
 	}
 `
